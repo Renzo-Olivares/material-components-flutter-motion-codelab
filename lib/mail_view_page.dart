@@ -22,7 +22,7 @@ class MailViewPage extends StatelessWidget {
         child: Container(
           height: double.infinity,
           child: Material(
-            color: Theme.of(context).cardColor,
+            color: Colors.green, //
             child: SingleChildScrollView(
               padding: const EdgeInsetsDirectional.only(
                 top: 42,

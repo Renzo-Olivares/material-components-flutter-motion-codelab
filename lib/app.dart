@@ -72,32 +72,32 @@ class ReplyApp extends StatelessWidget {
 ThemeData _buildReplyLightTheme(BuildContext context) {
   final base = ThemeData.light();
   return base.copyWith(
-    accentColor: ReplyColors.orange500,
-    bottomAppBarColor: ReplyColors.blue700,
-    bottomSheetTheme: BottomSheetThemeData(
-      backgroundColor: ReplyColors.blue700,
-      modalBackgroundColor: Colors.white.withOpacity(0.4),
-    ),
-    navigationRailTheme: NavigationRailThemeData(
-      backgroundColor: ReplyColors.blue700,
-      selectedIconTheme: const IconThemeData(color: ReplyColors.orange500),
-      selectedLabelTextStyle:
-          GoogleFonts.workSansTextTheme().headline5.copyWith(
-                color: ReplyColors.orange500,
-              ),
-      unselectedIconTheme: const IconThemeData(color: ReplyColors.blue200),
-      unselectedLabelTextStyle:
-          GoogleFonts.workSansTextTheme().headline5.copyWith(
-                color: ReplyColors.blue200,
-              ),
-    ),
-    canvasColor: ReplyColors.white50,
-    cardColor: ReplyColors.white50,
-    chipTheme: _buildChipTheme(
-      ReplyColors.blue700,
-      ReplyColors.lightChipBackground,
-      Brightness.light,
-    ),
+//    accentColor: ReplyColors.orange500,
+//    bottomAppBarColor: ReplyColors.blue700,
+//    bottomSheetTheme: BottomSheetThemeData(
+//      backgroundColor: ReplyColors.blue700,
+//      modalBackgroundColor: Colors.white.withOpacity(0.4),
+//    ),
+//    navigationRailTheme: NavigationRailThemeData(
+//      backgroundColor: ReplyColors.blue700,
+//      selectedIconTheme: const IconThemeData(color: ReplyColors.orange500),
+//      selectedLabelTextStyle:
+//          GoogleFonts.workSansTextTheme().headline5.copyWith(
+//                color: ReplyColors.orange500,
+//              ),
+//      unselectedIconTheme: const IconThemeData(color: ReplyColors.blue200),
+//      unselectedLabelTextStyle:
+//          GoogleFonts.workSansTextTheme().headline5.copyWith(
+//                color: ReplyColors.blue200,
+//              ),
+//    ),
+//    canvasColor: ReplyColors.white50,
+//    cardColor: ReplyColors.white50,
+//    chipTheme: _buildChipTheme(
+//      ReplyColors.blue700,
+//      ReplyColors.lightChipBackground,
+//      Brightness.light,
+//    ),
     colorScheme: const ColorScheme.light(
       primary: ReplyColors.blue700,
       primaryVariant: ReplyColors.blue800,
@@ -120,32 +120,32 @@ ThemeData _buildReplyLightTheme(BuildContext context) {
 ThemeData _buildReplyDarkTheme(BuildContext context) {
   final base = ThemeData.dark();
   return base.copyWith(
-    accentColor: ReplyColors.orange300,
-    bottomAppBarColor: ReplyColors.darkBottomAppBarBackground,
-    bottomSheetTheme: BottomSheetThemeData(
-      backgroundColor: ReplyColors.darkDrawerBackground,
-      modalBackgroundColor: Colors.black.withOpacity(0.8),
-    ),
-    navigationRailTheme: NavigationRailThemeData(
-      backgroundColor: ReplyColors.darkBottomAppBarBackground,
-      selectedIconTheme: const IconThemeData(color: ReplyColors.orange300),
-      selectedLabelTextStyle:
-          GoogleFonts.workSansTextTheme().headline5.copyWith(
-                color: ReplyColors.orange300,
-              ),
-      unselectedIconTheme: const IconThemeData(color: ReplyColors.greyLabel),
-      unselectedLabelTextStyle:
-          GoogleFonts.workSansTextTheme().headline5.copyWith(
-                color: ReplyColors.greyLabel,
-              ),
-    ),
-    canvasColor: ReplyColors.black900,
-    cardColor: ReplyColors.darkCardBackground,
-    chipTheme: _buildChipTheme(
-      ReplyColors.blue200,
-      ReplyColors.darkChipBackground,
-      Brightness.dark,
-    ),
+//    accentColor: ReplyColors.orange300,
+//    bottomAppBarColor: ReplyColors.darkBottomAppBarBackground,
+//    bottomSheetTheme: BottomSheetThemeData(
+//      backgroundColor: ReplyColors.darkDrawerBackground,
+//      modalBackgroundColor: Colors.black.withOpacity(0.8),
+//    ),
+//    navigationRailTheme: NavigationRailThemeData(
+//      backgroundColor: ReplyColors.darkBottomAppBarBackground,
+//      selectedIconTheme: const IconThemeData(color: ReplyColors.orange300),
+//      selectedLabelTextStyle:
+//          GoogleFonts.workSansTextTheme().headline5.copyWith(
+//                color: ReplyColors.orange300,
+//              ),
+//      unselectedIconTheme: const IconThemeData(color: ReplyColors.greyLabel),
+//      unselectedLabelTextStyle:
+//          GoogleFonts.workSansTextTheme().headline5.copyWith(
+//                color: ReplyColors.greyLabel,
+//              ),
+//    ),
+//    canvasColor: ReplyColors.black900,
+//    cardColor: ReplyColors.darkCardBackground,
+//    chipTheme: _buildChipTheme(
+//      ReplyColors.blue200,
+//      ReplyColors.darkChipBackground,
+//      Brightness.dark,
+//    ),
     colorScheme: const ColorScheme.dark(
       primary: ReplyColors.blue200,
       primaryVariant: ReplyColors.blue300,

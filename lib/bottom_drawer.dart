@@ -25,7 +25,7 @@ class BottomDrawer extends StatelessWidget {
       onVerticalDragUpdate: onVerticalDragUpdate,
       onVerticalDragEnd: onVerticalDragEnd,
       child: Material(
-        color: theme.bottomSheetTheme.backgroundColor,
+        color: Colors.green, //
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(12),
           topRight: Radius.circular(12),

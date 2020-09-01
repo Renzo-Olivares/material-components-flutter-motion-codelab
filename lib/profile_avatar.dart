@@ -15,7 +15,7 @@ class ProfileAvatar extends StatelessWidget {
       color: Colors.transparent,
       child: CircleAvatar(
         radius: radius,
-        backgroundColor: Theme.of(context).cardColor,
+//        backgroundColor: Theme.of(context).cardColor,
         child: ClipOval(
           child: Image.asset(
             avatar,

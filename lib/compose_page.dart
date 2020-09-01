@@ -29,7 +29,7 @@ class ComposePage extends StatelessWidget {
         child: Container(
           height: double.infinity,
           child: Material(
-            color: Theme.of(context).cardColor,
+            color: Colors.green, //
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,8 +241,8 @@ class _RecipientsRow extends StatelessWidget {
             child: Wrap(
               children: [
                 Chip(
-                  backgroundColor:
-                      Theme.of(context).chipTheme.secondarySelectedColor,
+//                  backgroundColor:
+//                      Theme.of(context).chipTheme.secondarySelectedColor,
                   padding: EdgeInsets.zero,
                   avatar: CircleAvatar(
                     backgroundImage: AssetImage(

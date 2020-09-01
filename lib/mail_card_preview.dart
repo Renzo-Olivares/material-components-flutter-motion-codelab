@@ -32,12 +32,12 @@ class MailPreviewCard extends StatelessWidget {
       openBuilder: (context, closedContainer) {
         return MailViewPage(id: id, email: email);
       },
-      openColor: theme.cardColor,
+      openColor: Colors.green, //
       closedShape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(0)),
       ),
       closedElevation: 0,
-      closedColor: theme.cardColor,
+      closedColor: Colors.green, //
       closedBuilder: (context, openContainer) {
         final colorScheme = theme.colorScheme;
         final mailPreview = _MailPreview(

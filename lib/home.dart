@@ -280,7 +280,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               child: Container(
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
-                color: Theme.of(context).bottomSheetTheme.modalBackgroundColor,
+                color: Colors.green,
               ),
             ),
           ),
@@ -657,13 +657,13 @@ class _BottomDrawerFolderSection extends StatelessWidget {
                   folders[folder],
                   package: _assetsPackage,
                 ),
-                color: navigationRailTheme.unselectedLabelTextStyle.color,
+//                color: navigationRailTheme.unselectedLabelTextStyle.color,
               ),
               title: Text(
                 folder,
                 style: theme.textTheme.bodyText2.copyWith(
-                  color: navigationRailTheme.unselectedLabelTextStyle.color,
-                ),
+//                  color: navigationRailTheme.unselectedLabelTextStyle.color,
+                    ),
               ),
             ),
           ),
@@ -769,7 +769,7 @@ class _ReplyFabState extends State<_ReplyFab>
           openBuilder: (context, closedContainer) {
             return const ComposePage();
           },
-          openColor: theme.cardColor,
+//          openColor: theme.cardColor,
           closedShape: circleFabBorder,
           closedColor: theme.colorScheme.secondary,
           closedElevation: 6,
@@ -837,7 +837,7 @@ class _SharedAxisTransitionSwitcher extends StatelessWidget {
           reverse: !onSearchPage,
           transitionBuilder: (child, animation, secondaryAnimation) {
             return SharedAxisTransition(
-              fillColor: Theme.of(context).cardColor,
+//              fillColor: Theme.of(context).cardColor,
               animation: animation,
               secondaryAnimation: secondaryAnimation,
               transitionType: SharedAxisTransitionType.scaled,
