@@ -11,7 +11,7 @@ class SearchPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Material(
-          color: Theme.of(context).colorScheme.surface,
+          color: Theme.of(context).colorScheme.onPrimary,
           child: Column(
             children: [
               Padding(

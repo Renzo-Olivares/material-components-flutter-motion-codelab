@@ -71,24 +71,11 @@ class ReplyApp extends StatelessWidget {
 ThemeData _buildReplyLightTheme(BuildContext context) {
   final base = ThemeData.light();
   return base.copyWith(
-    accentColor: ReplyColors.orange500,
+//    accentColor: ReplyColors.orange500,
     bottomAppBarColor: ReplyColors.blue700,
     bottomSheetTheme: BottomSheetThemeData(
-      backgroundColor: ReplyColors.blue700,
-      modalBackgroundColor: Colors.white.withOpacity(0.4),
-    ),
-    navigationRailTheme: NavigationRailThemeData(
       backgroundColor: ReplyColors.white50,
-      selectedIconTheme: const IconThemeData(color: ReplyColors.orange500),
-      selectedLabelTextStyle:
-          GoogleFonts.workSansTextTheme().headline5.copyWith(
-                color: ReplyColors.orange500,
-              ),
-      unselectedIconTheme: const IconThemeData(color: ReplyColors.blue200),
-      unselectedLabelTextStyle:
-          GoogleFonts.workSansTextTheme().headline5.copyWith(
-                color: ReplyColors.blue200,
-              ),
+      modalBackgroundColor: Colors.white.withOpacity(0.4),
     ),
     canvasColor: ReplyColors.white50,
     cardColor: ReplyColors.white50,
@@ -102,7 +89,7 @@ ThemeData _buildReplyLightTheme(BuildContext context) {
       primaryVariant: ReplyColors.blue800,
       secondary: ReplyColors.orange500,
       secondaryVariant: ReplyColors.orange400,
-      surface: ReplyColors.white50,
+      surface: ReplyColors.blue800,
       error: ReplyColors.red400,
       onPrimary: ReplyColors.white50,
       onSecondary: ReplyColors.black900,
@@ -119,24 +106,11 @@ ThemeData _buildReplyLightTheme(BuildContext context) {
 ThemeData _buildReplyDarkTheme(BuildContext context) {
   final base = ThemeData.dark();
   return base.copyWith(
-    accentColor: ReplyColors.orange300,
+//    accentColor: ReplyColors.orange300,
     bottomAppBarColor: ReplyColors.darkBottomAppBarBackground,
     bottomSheetTheme: BottomSheetThemeData(
       backgroundColor: ReplyColors.darkDrawerBackground,
       modalBackgroundColor: Colors.black.withOpacity(0.8),
-    ),
-    navigationRailTheme: NavigationRailThemeData(
-      backgroundColor: ReplyColors.darkDrawerBackground,
-      selectedIconTheme: const IconThemeData(color: ReplyColors.orange300),
-      selectedLabelTextStyle:
-          GoogleFonts.workSansTextTheme().headline5.copyWith(
-                color: ReplyColors.orange300,
-              ),
-      unselectedIconTheme: const IconThemeData(color: ReplyColors.greyLabel),
-      unselectedLabelTextStyle:
-          GoogleFonts.workSansTextTheme().headline5.copyWith(
-                color: ReplyColors.greyLabel,
-              ),
     ),
     canvasColor: ReplyColors.black900,
     cardColor: ReplyColors.darkCardBackground,
@@ -157,7 +131,7 @@ ThemeData _buildReplyDarkTheme(BuildContext context) {
       onBackground: ReplyColors.white50,
       onSurface: ReplyColors.white50,
       onError: ReplyColors.black900,
-      background: ReplyColors.black900Alpha087,
+      background: ReplyColors.black900,
     ),
     textTheme: _buildReplyDarkTextTheme(base.textTheme),
     scaffoldBackgroundColor: ReplyColors.black900,
