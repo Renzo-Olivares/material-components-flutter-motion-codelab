@@ -730,12 +730,7 @@ class _MailNavigatorState extends State<_MailNavigator> {
         switch (settings.name) {
           case inboxRoute:
             return MaterialPageRoute<void>(
-              builder: (context) {
-                return _FadeThroughTransitionSwitcher(
-                  fillColor: Theme.of(context).scaffoldBackgroundColor,
-                  child: widget.child,
-                );
-              },
+              builder: (context) => widget.child,
               settings: settings,
             );
             break;
