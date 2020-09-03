@@ -311,55 +311,37 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _willPopCallback,
-      child: _SharedAxisTransitionSwitcher(
-        defaultChild: Scaffold(
-          extendBody: true,
-          body: LayoutBuilder(
-            builder: _buildStack,
-          ),
-          bottomNavigationBar: _AnimatedBottomAppBar(
-            bottomAppBarController: _bottomAppBarController,
-            bottomAppBarCurve: _bottomAppBarCurve,
-            bottomDrawerVisible: _bottomDrawerVisible,
-            drawerController: _drawerController,
-            dropArrowCurve: _dropArrowCurve,
-            navigationDestinations: _navigationDestinations,
-            selectedIndex: _selectedIndex,
-            toggleBottomDrawerVisibility: _toggleBottomDrawerVisibility,
-          ),
-          floatingActionButton: _bottomDrawerVisible
-              ? null
-              : const Padding(
-                  padding: EdgeInsetsDirectional.only(bottom: 8),
-                  child: _ReplyFab(),
-                ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
+      child: Scaffold(
+        extendBody: true,
+        body: LayoutBuilder(
+          builder: _buildStack,
         ),
+        bottomNavigationBar: _AnimatedBottomAppBar(
+          bottomAppBarController: _bottomAppBarController,
+          bottomAppBarCurve: _bottomAppBarCurve,
+          bottomDrawerVisible: _bottomDrawerVisible,
+          drawerController: _drawerController,
+          dropArrowCurve: _dropArrowCurve,
+          navigationDestinations: _navigationDestinations,
+          selectedIndex: _selectedIndex,
+          toggleBottomDrawerVisibility: _toggleBottomDrawerVisibility,
+        ),
+        floatingActionButton: _bottomDrawerVisible
+            ? null
+            : const Padding(
+                padding: EdgeInsetsDirectional.only(bottom: 8),
+                child: _ReplyFab(),
+              ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
   }
 
   Future<bool> _willPopCallback() async {
     // This function handles when a back button or back gesture is initiated.
-    // It checks first if we are on the SearchPage and if we are then it updates
-    // the onSearchPage property in our EmailStore to "pop" us off the
-    // SearchPage. If we are not on the SearchPage then we check if our
-    // navigator has any routes to pop, and if it does then we pop one route
-    // from the stack and update our EmailStore's currentlySelectedEmailId
-    // to indicate we are back on the HomePage.
-    var onSearchPage = Provider.of<EmailStore>(
-      context,
-      listen: false,
-    ).onSearchPage;
-
-    if (onSearchPage) {
-      Provider.of<EmailStore>(
-        context,
-        listen: false,
-      ).onSearchPage = false;
-      return false;
-    }
+    // We check if our navigator has any routes to pop, and if it does then we
+    // pop one route from the stack and update our EmailStore's
+    // currentlySelectedEmailId to indicate we are back on the HomePage.
 
     if (mobileMailNavKey.currentState.canPop()) {
       mobileMailNavKey.currentState.pop();
@@ -582,10 +564,11 @@ class _BottomAppBarActionItems extends StatelessWidget {
                         icon: const Icon(Icons.search),
                         color: ReplyColors.white50,
                         onPressed: () {
-                          Provider.of<EmailStore>(
-                            context,
-                            listen: false,
-                          ).onSearchPage = true;
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const SearchPage(),
+                            ),
+                          );
                         },
                       ),
                     ),
@@ -843,36 +826,6 @@ class _FadeThroughTransitionSwitcher extends StatelessWidget {
         );
       },
       child: child,
-    );
-  }
-}
-
-class _SharedAxisTransitionSwitcher extends StatelessWidget {
-  const _SharedAxisTransitionSwitcher({
-    @required this.defaultChild,
-  }) : assert(defaultChild != null);
-
-  final Widget defaultChild;
-
-  @override
-  Widget build(BuildContext context) {
-    return Selector<EmailStore, bool>(
-      selector: (context, emailStore) => emailStore.onSearchPage,
-      builder: (context, onSearchPage, child) {
-        return PageTransitionSwitcher(
-          reverse: !onSearchPage,
-          transitionBuilder: (child, animation, secondaryAnimation) {
-            return SharedAxisTransition(
-              fillColor: Theme.of(context).cardColor,
-              animation: animation,
-              secondaryAnimation: secondaryAnimation,
-              transitionType: SharedAxisTransitionType.scaled,
-              child: child,
-            );
-          },
-          child: onSearchPage ? const SearchPage() : defaultChild,
-        );
-      },
     );
   }
 }
