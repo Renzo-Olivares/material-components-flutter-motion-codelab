@@ -4,11 +4,11 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
+import 'package:reply/compose_page.dart';
 
 import 'app.dart';
 import 'bottom_drawer.dart';
 import 'colors.dart';
-import 'compose_page.dart';
 import 'inbox.dart';
 import 'model/email_store.dart';
 import 'search_page.dart';
@@ -782,45 +782,39 @@ class _ReplyFabState extends State<_ReplyFab>
     return Selector<EmailStore, bool>(
       selector: (context, emailStore) => emailStore.onMailView,
       builder: (context, onMailView, child) {
-        final fabSwitcher = _FadeThroughTransitionSwitcher(
-          fillColor: Colors.transparent,
-          child: onMailView
-              ? Icon(
-                  Icons.reply_all,
-                  key: fabKey,
-                  color: Colors.black,
-                )
-              : const Icon(
-                  Icons.create,
-                  color: Colors.black,
-                ),
-        );
         final tooltip = onMailView ? 'Reply' : 'Compose';
 
-        return OpenContainer(
-          openBuilder: (context, closedContainer) {
-            return const ComposePage();
-          },
-          openColor: theme.cardColor,
-          closedShape: circleFabBorder,
-          closedColor: theme.colorScheme.secondary,
-          closedElevation: 6,
-          closedBuilder: (context, openContainer) {
-            return Tooltip(
-              message: tooltip,
-              child: InkWell(
-                customBorder: circleFabBorder,
-                onTap: openContainer,
-                child: SizedBox(
-                  height: _mobileFabDimension,
-                  width: _mobileFabDimension,
-                  child: Center(
-                    child: fabSwitcher,
-                  ),
+        return Material(
+          shape: circleFabBorder,
+          color: theme.colorScheme.secondary,
+          elevation: 6,
+          child: Tooltip(
+            message: tooltip,
+            child: InkWell(
+              customBorder: circleFabBorder,
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const ComposePage()),
+                );
+              },
+              child: SizedBox(
+                height: _mobileFabDimension,
+                width: _mobileFabDimension,
+                child: Center(
+                  child: onMailView
+                      ? Icon(
+                          Icons.reply_all,
+                          key: fabKey,
+                          color: Colors.black,
+                        )
+                      : const Icon(
+                          Icons.create,
+                          color: Colors.black,
+                        ),
                 ),
               ),
-            );
-          },
+            ),
+          ),
         );
       },
     );
