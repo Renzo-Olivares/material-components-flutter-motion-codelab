@@ -1,6 +1,6 @@
-import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reply/home.dart';
 
 import 'colors.dart';
 import 'mail_view_page.dart';
@@ -28,78 +28,74 @@ class MailPreviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return OpenContainer(
-      openBuilder: (context, closedContainer) {
-        return MailViewPage(id: id, email: email);
-      },
-      openColor: theme.cardColor,
-      closedShape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(0)),
-      ),
-      closedElevation: 0,
-      closedColor: theme.cardColor,
-      closedBuilder: (context, openContainer) {
-        final colorScheme = theme.colorScheme;
-        final mailPreview = _MailPreview(
-          id: id,
-          email: email,
-          onTap: openContainer,
-          onStar: onStar,
-          onDelete: onDelete,
-        );
-        final onStarredInbox = Provider.of<EmailStore>(
-              context,
-              listen: false,
-            ).currentlySelectedInbox ==
-            'Starred';
-
-        return Dismissible(
-          key: ObjectKey(email),
-          dismissThresholds: const {
-            DismissDirection.startToEnd: 0.8,
-            DismissDirection.endToStart: 0.4,
-          },
-          onDismissed: (direction) {
-            switch (direction) {
-              case DismissDirection.endToStart:
-                if (onStarredInbox) {
-                  onStar();
-                }
-                break;
-              case DismissDirection.startToEnd:
-                onDelete();
-                break;
-              default:
-            }
-          },
-          background: _DismissibleContainer(
-            icon: 'twotone_delete',
-            backgroundColor: colorScheme.primary,
-            iconColor: ReplyColors.blue50,
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsetsDirectional.only(start: 20),
+    final colorScheme = theme.colorScheme;
+    final mailPreview = _MailPreview(
+      id: id,
+      email: email,
+      onTap: () {
+        mobileMailNavKey.currentState.push(
+          MaterialPageRoute(
+            builder: (context) => MailViewPage(id: id, email: email),
           ),
-          confirmDismiss: (direction) async {
-            if (direction == DismissDirection.endToStart) {
+        );
+      },
+      onStar: onStar,
+      onDelete: onDelete,
+    );
+    final onStarredInbox = Provider.of<EmailStore>(
+          context,
+          listen: false,
+        ).currentlySelectedInbox ==
+        'Starred';
+
+    return Material(
+      color: theme.cardColor,
+      child: Dismissible(
+        key: ObjectKey(email),
+        dismissThresholds: const {
+          DismissDirection.startToEnd: 0.8,
+          DismissDirection.endToStart: 0.4,
+        },
+        onDismissed: (direction) {
+          switch (direction) {
+            case DismissDirection.endToStart:
               if (onStarredInbox) {
-                return true;
+                onStar();
               }
-              onStar();
-              return false;
-            } else {
+              break;
+            case DismissDirection.startToEnd:
+              onDelete();
+              break;
+            default:
+          }
+        },
+        background: _DismissibleContainer(
+          icon: 'twotone_delete',
+          backgroundColor: colorScheme.primary,
+          iconColor: ReplyColors.blue50,
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsetsDirectional.only(start: 20),
+        ),
+        confirmDismiss: (direction) async {
+          if (direction == DismissDirection.endToStart) {
+            if (onStarredInbox) {
               return true;
             }
-          },
-          secondaryBackground: _DismissibleContainer(
-            icon: 'twotone_star',
-            backgroundColor: colorScheme.secondary,
-            iconColor: ReplyColors.black900,
-            alignment: Alignment.centerRight,
-            padding: const EdgeInsetsDirectional.only(end: 20),
-          ),
-          child: mailPreview,
-        );
-      },
+            onStar();
+            return false;
+          } else {
+            return true;
+          }
+        },
+        secondaryBackground: _DismissibleContainer(
+          icon: 'twotone_star',
+          backgroundColor: colorScheme.secondary,
+          iconColor: ReplyColors.black900,
+          alignment: Alignment.centerRight,
+          padding: const EdgeInsetsDirectional.only(end: 20),
+        ),
+        child: mailPreview,
+      ),
     );
   }
 }
