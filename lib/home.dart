@@ -37,50 +37,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Animation<double> _drawerCurve;
   Animation<double> _dropArrowCurve;
   Animation<double> _bottomAppBarCurve;
-  int _selectedIndex = 0;
 
   final _bottomDrawerKey = GlobalKey(debugLabel: 'Bottom Drawer');
-  final _navigationDestinations = <_Destination>[
-    _Destination(
-      name: 'Inbox',
-      icon: '$_iconAssetLocation/twotone_inbox.png',
-      index: 0,
-    ),
-    _Destination(
-      name: 'Starred',
-      icon: '$_iconAssetLocation/twotone_star.png',
-      index: 1,
-    ),
-    _Destination(
-      name: 'Sent',
-      icon: '$_iconAssetLocation/twotone_send.png',
-      index: 2,
-    ),
-    _Destination(
-      name: 'Trash',
-      icon: '$_iconAssetLocation/twotone_delete.png',
-      index: 3,
-    ),
-    _Destination(
-      name: 'Spam',
-      icon: '$_iconAssetLocation/twotone_error.png',
-      index: 4,
-    ),
-    _Destination(
-      name: 'Drafts',
-      icon: '$_iconAssetLocation/twotone_drafts.png',
-      index: 5,
-    ),
-  ];
-
-  final _folders = <String, String>{
-    'Receipts': _folderIconAssetLocation,
-    'Pine Elementary': _folderIconAssetLocation,
-    'Taxes': _folderIconAssetLocation,
-    'Vacation': _folderIconAssetLocation,
-    'Mortgage': _folderIconAssetLocation,
-    'Freelance': _folderIconAssetLocation,
-  };
 
   @override
   void initState() {
@@ -136,26 +94,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _dropArrowController.dispose();
     _bottomAppBarController.dispose();
     super.dispose();
-  }
-
-  void _onDestinationSelected(int index, String destination) {
-    var emailStore = Provider.of<EmailStore>(
-      context,
-      listen: false,
-    );
-
-    if (emailStore.currentlySelectedInbox != destination) {
-      emailStore.currentlySelectedInbox = destination;
-    }
-
-    if (emailStore.onMailView) {
-      mobileMailNavKey.currentState.pop();
-      emailStore.currentlySelectedEmailId = -1;
-    }
-
-    setState(() {
-      _selectedIndex = index;
-    });
   }
 
   bool get _bottomDrawerVisible {
@@ -280,13 +218,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               onVerticalDragUpdate: _handleDragUpdate,
               onVerticalDragEnd: _handleDragEnd,
               leading: _BottomDrawerDestinations(
-                destinations: _navigationDestinations,
                 drawerController: _drawerController,
                 dropArrowController: _dropArrowController,
-                selectedIndex: _selectedIndex,
-                onItemTapped: _onDestinationSelected,
               ),
-              trailing: _BottomDrawerFolderSection(folders: _folders),
+              trailing: const _BottomDrawerFolderSection(),
             ),
           ),
         ),
@@ -307,8 +242,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         bottomDrawerVisible: _bottomDrawerVisible,
         drawerController: _drawerController,
         dropArrowCurve: _dropArrowCurve,
-        navigationDestinations: _navigationDestinations,
-        selectedIndex: _selectedIndex,
         toggleBottomDrawerVisibility: _toggleBottomDrawerVisibility,
       ),
       floatingActionButton: _bottomDrawerVisible
@@ -329,8 +262,6 @@ class _AnimatedBottomAppBar extends StatelessWidget {
     this.bottomDrawerVisible,
     this.drawerController,
     this.dropArrowCurve,
-    this.navigationDestinations,
-    this.selectedIndex,
     this.toggleBottomDrawerVisibility,
   });
 
@@ -339,8 +270,6 @@ class _AnimatedBottomAppBar extends StatelessWidget {
   final bool bottomDrawerVisible;
   final AnimationController drawerController;
   final Animation<double> dropArrowCurve;
-  final List<_Destination> navigationDestinations;
-  final int selectedIndex;
   final VoidCallback toggleBottomDrawerVisibility;
 
   @override
@@ -393,12 +322,19 @@ class _AnimatedBottomAppBar extends StatelessWidget {
                                   bottomDrawerVisible || onMailView ? 0.0 : 1.0,
                               duration: _kAnimationDuration,
                               curve: standardEasing,
-                              child: Text(
-                                navigationDestinations[selectedIndex].name,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1
-                                    .copyWith(color: ReplyColors.white50),
+                              child: Selector<EmailStore, String>(
+                                selector: (context, emailStore) =>
+                                    emailStore.currentlySelectedInbox,
+                                builder:
+                                    (context, currentlySelectedInbox, child) {
+                                  return Text(
+                                    currentlySelectedInbox,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(color: ReplyColors.white50),
+                                  );
+                                },
                               ),
                             ),
                           ],
@@ -553,23 +489,47 @@ class _BottomAppBarActionItems extends StatelessWidget {
 }
 
 class _BottomDrawerDestinations extends StatelessWidget {
-  _BottomDrawerDestinations({
-    @required this.destinations,
+  const _BottomDrawerDestinations({
     @required this.drawerController,
     @required this.dropArrowController,
-    @required this.selectedIndex,
-    @required this.onItemTapped,
-  })  : assert(destinations != null),
-        assert(drawerController != null),
-        assert(dropArrowController != null),
-        assert(selectedIndex != null),
-        assert(onItemTapped != null);
+  })  : assert(drawerController != null),
+        assert(dropArrowController != null);
 
-  final List<_Destination> destinations;
   final AnimationController drawerController;
   final AnimationController dropArrowController;
-  final int selectedIndex;
-  final void Function(int, String) onItemTapped;
+
+  final destinations = const <_Destination>[
+    _Destination(
+      name: 'Inbox',
+      icon: '$_iconAssetLocation/twotone_inbox.png',
+      index: 0,
+    ),
+    _Destination(
+      name: 'Starred',
+      icon: '$_iconAssetLocation/twotone_star.png',
+      index: 1,
+    ),
+    _Destination(
+      name: 'Sent',
+      icon: '$_iconAssetLocation/twotone_send.png',
+      index: 2,
+    ),
+    _Destination(
+      name: 'Trash',
+      icon: '$_iconAssetLocation/twotone_delete.png',
+      index: 3,
+    ),
+    _Destination(
+      name: 'Spam',
+      icon: '$_iconAssetLocation/twotone_error.png',
+      index: 4,
+    ),
+    _Destination(
+      name: 'Drafts',
+      icon: '$_iconAssetLocation/twotone_drafts.png',
+      index: 5,
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -581,32 +541,54 @@ class _BottomDrawerDestinations extends StatelessWidget {
           InkWell(
             onTap: () {
               drawerController.reverse().whenCompleteOrCancel(() {
-                onItemTapped(destination.index, destination.name);
+                _onDestinationSelected(destination.index, destination.name);
               });
               dropArrowController.forward();
             },
-            child: ListTile(
-              leading: ImageIcon(
-                AssetImage(
-                  destination.icon,
-                  package: _assetsPackage,
-                ),
-                color: destination.index == selectedIndex
-                    ? theme.colorScheme.secondary
-                    : ReplyColors.white50.withOpacity(0.64),
-              ),
-              title: Text(
-                destination.name,
-                style: theme.textTheme.bodyText2.copyWith(
-                  color: destination.index == selectedIndex
-                      ? theme.colorScheme.secondary
-                      : ReplyColors.white50.withOpacity(0.64),
-                ),
-              ),
+            child: Selector<EmailStore, String>(
+              selector: (context, emailStore) =>
+                  emailStore.currentlySelectedInbox,
+              builder: (context, currentlySelectedInbox, child) {
+                return ListTile(
+                  leading: ImageIcon(
+                    AssetImage(
+                      destination.icon,
+                      package: _assetsPackage,
+                    ),
+                    color: destination.name == currentlySelectedInbox
+                        ? theme.colorScheme.secondary
+                        : ReplyColors.white50.withOpacity(0.64),
+                  ),
+                  title: Text(
+                    destination.name,
+                    style: theme.textTheme.bodyText2.copyWith(
+                      color: destination.name == currentlySelectedInbox
+                          ? theme.colorScheme.secondary
+                          : ReplyColors.white50.withOpacity(0.64),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
       ],
     );
+  }
+
+  void _onDestinationSelected(int index, String destination) {
+    var emailStore = Provider.of<EmailStore>(
+      mobileMailNavKey.currentContext,
+      listen: false,
+    );
+
+    if (emailStore.currentlySelectedInbox != destination) {
+      emailStore.currentlySelectedInbox = destination;
+    }
+
+    if (emailStore.onMailView) {
+      mobileMailNavKey.currentState.pop();
+      emailStore.currentlySelectedEmailId = -1;
+    }
   }
 }
 
@@ -625,10 +607,16 @@ class _Destination {
 }
 
 class _BottomDrawerFolderSection extends StatelessWidget {
-  const _BottomDrawerFolderSection({@required this.folders})
-      : assert(folders != null);
+  const _BottomDrawerFolderSection();
 
-  final Map<String, String> folders;
+  final folders = const <String, String>{
+    'Receipts': _folderIconAssetLocation,
+    'Pine Elementary': _folderIconAssetLocation,
+    'Taxes': _folderIconAssetLocation,
+    'Vacation': _folderIconAssetLocation,
+    'Mortgage': _folderIconAssetLocation,
+    'Freelance': _folderIconAssetLocation,
+  };
 
   @override
   Widget build(BuildContext context) {
