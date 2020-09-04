@@ -170,7 +170,7 @@ class EmailStore with ChangeNotifier {
   String _currentlySelectedInbox = 'Inbox';
   bool _onCompose = false;
   ThemeMode _currentTheme = ThemeMode.system;
-  AnimationSpeedSetting _currentAnimationSpeed = AnimationSpeedSetting.normal;
+  SlowMotionSpeedSetting _currentAnimationSpeed = SlowMotionSpeedSetting.normal;
 
   Map<String, Set<Email>> get emails =>
       Map<String, Set<Email>>.unmodifiable(_categories);
@@ -207,7 +207,7 @@ class EmailStore with ChangeNotifier {
   bool get onMailView => _currentlySelectedEmailId > -1;
   bool get onCompose => _onCompose;
   ThemeMode get themeMode => _currentTheme;
-  AnimationSpeedSetting get animationSpeed => _currentAnimationSpeed;
+  SlowMotionSpeedSetting get animationSpeed => _currentAnimationSpeed;
 
   bool isEmailStarred(Email email) {
     return _categories['Starred'].contains(email);
@@ -228,7 +228,7 @@ class EmailStore with ChangeNotifier {
     notifyListeners();
   }
 
-  set animationSpeed(AnimationSpeedSetting speed) {
+  set animationSpeed(SlowMotionSpeedSetting speed) {
     _currentAnimationSpeed = speed;
     timeDilation = animationSpeed.value;
   }
