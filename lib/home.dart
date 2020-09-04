@@ -360,7 +360,7 @@ class _AnimatedBottomAppBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Divider(thickness: 1, height: 1),
+                if (bottomDrawerVisible) Divider(thickness: 1, height: 1),
                 Container(
                   color: Colors.transparent,
                   height: kToolbarHeight,
