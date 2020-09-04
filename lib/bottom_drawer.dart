@@ -138,9 +138,8 @@ class _BottomDrawerDestinations extends StatelessWidget {
         for (var destination in destinations)
           InkWell(
             onTap: () {
-              drawerController.reverse().whenCompleteOrCancel(() {
-                _onDestinationSelected(destination.index, destination.name);
-              });
+              _onDestinationSelected(destination.index, destination.name);
+              drawerController.reverse();
               dropArrowController.forward();
             },
             child: Selector<EmailStore, String>(
