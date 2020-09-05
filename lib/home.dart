@@ -288,6 +288,7 @@ class _AnimatedBottomAppBar extends StatelessWidget {
               children: [
                 if (bottomDrawerVisible)
                   Container(
+                    key: UniqueKey(),
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
