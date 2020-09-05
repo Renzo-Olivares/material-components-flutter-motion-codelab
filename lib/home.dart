@@ -15,6 +15,7 @@ import 'mail_view_router.dart';
 import 'model/email_store.dart';
 import 'router.dart';
 import 'settings_bottom_sheet.dart';
+import 'waterfall_notched_rectangle.dart';
 
 const _assetsPackage = 'flutter_gallery_assets';
 const _iconAssetLocation = 'reply/icons';
@@ -279,8 +280,8 @@ class _AnimatedBottomAppBar extends StatelessWidget {
           sizeFactor: bottomAppBarCurve,
           axisAlignment: -1,
           child: BottomAppBar(
-            shape: const CircularNotchedRectangle(),
-            notchMargin: 8,
+            shape: const WaterfallNotchedRectangle(),
+            notchMargin: 4,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
