@@ -283,7 +283,7 @@ class _AnimatedBottomAppBar extends StatelessWidget {
             padding: EdgeInsetsDirectional.only(top: 2),
             child: BottomAppBar(
               shape: const WaterfallNotchedRectangle(),
-              notchMargin: 6,
+              notchMargin: 4,
               child: Container(
                 color: Colors.transparent,
                 height: kToolbarHeight,
