@@ -281,7 +281,7 @@ class _AnimatedBottomAppBar extends StatelessWidget {
           axisAlignment: -1,
           child: BottomAppBar(
             shape: const WaterfallNotchedRectangle(),
-            notchMargin: 8,
+            notchMargin: 6,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
