@@ -49,6 +49,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       value: 0,
       vsync: this,
     )..addListener(() {
+        if (_drawerController.status == AnimationStatus.dismissed &&
+            _drawerController.value == 0) {
+          Provider.of<EmailStore>(
+            context,
+            listen: false,
+          ).bottomDrawerVisible = false;
+        }
+
         if (_drawerController.value < 0.01) {
           setState(() {
             //Reload state when drawer is at its smallest to toggle visibility
@@ -104,6 +112,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   void _toggleBottomDrawerVisibility() {
     if (_drawerController.value < 0.4) {
+      Provider.of<EmailStore>(
+        context,
+        listen: false,
+      ).bottomDrawerVisible = true;
       _drawerController.animateTo(0.4, curve: standardEasing);
       _dropArrowController.animateTo(0.35, curve: standardEasing);
       return;
@@ -187,7 +199,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       children: [
         NotificationListener<ScrollNotification>(
           onNotification: _handleScrollNotification,
-          child: _MailRouter(),
+          child: _MailRouter(
+            drawerController: _drawerController,
+          ),
         ),
         GestureDetector(
           onTap: () {
@@ -502,21 +516,19 @@ class _BottomAppBarActionItems extends StatelessWidget {
   }
 }
 
-class _MailRouter extends StatefulWidget {
-  const _MailRouter();
+class _MailRouter extends StatelessWidget {
+  const _MailRouter({this.drawerController});
 
-  @override
-  _MailRouterState createState() => _MailRouterState();
-}
+  final AnimationController drawerController;
 
-class _MailRouterState extends State<_MailRouter> {
   @override
   Widget build(BuildContext context) {
     final RootBackButtonDispatcher backButtonDispatcher =
         Router.of(context).backButtonDispatcher as RootBackButtonDispatcher;
 
     return Router(
-      routerDelegate: MailViewRouterDelegate(),
+      routerDelegate:
+          MailViewRouterDelegate(drawerController: drawerController),
       backButtonDispatcher: ChildBackButtonDispatcher(backButtonDispatcher)
         ..takePriority(),
     );
