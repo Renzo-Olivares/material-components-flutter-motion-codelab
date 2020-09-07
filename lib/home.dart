@@ -96,12 +96,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  // bool get _bottomDrawerVisible {
-  //   final status = _drawerController.status;
-  //   return status == AnimationStatus.completed ||
-  //       status == AnimationStatus.forward;
-  // }
-
   void _toggleBottomDrawerVisibility() {
     if (_drawerController.value < 0.4) {
       Provider.of<EmailStore>(
@@ -258,12 +252,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       bottomNavigationBar: _AnimatedBottomAppBar(
         bottomAppBarController: _bottomAppBarController,
         bottomAppBarCurve: _bottomAppBarCurve,
-        // bottomDrawerVisible: _bottomDrawerVisible,
         drawerController: _drawerController,
         dropArrowCurve: _dropArrowCurve,
         toggleBottomDrawerVisibility: _toggleBottomDrawerVisibility,
       ),
-      // floatingActionButton: null,
       floatingActionButton:
           Provider.of<EmailStore>(context, listen: true).bottomDrawerVisible
               ? null
@@ -280,7 +272,6 @@ class _AnimatedBottomAppBar extends StatelessWidget {
   const _AnimatedBottomAppBar({
     this.bottomAppBarController,
     this.bottomAppBarCurve,
-    // this.bottomDrawerVisible,
     this.drawerController,
     this.dropArrowCurve,
     this.toggleBottomDrawerVisibility,
@@ -288,7 +279,6 @@ class _AnimatedBottomAppBar extends StatelessWidget {
 
   final AnimationController bottomAppBarController;
   final Animation<double> bottomAppBarCurve;
-  // final bool bottomDrawerVisible;
   final AnimationController drawerController;
   final Animation<double> dropArrowCurve;
   final VoidCallback toggleBottomDrawerVisibility;
