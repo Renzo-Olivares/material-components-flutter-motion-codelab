@@ -283,13 +283,13 @@ class _AnimatedBottomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var fadeOut = Tween<double>(begin: 1, end: -1).animate(
+      drawerController.drive(CurveTween(curve: standardEasing)),
+    );
+
     return Selector<EmailStore, bool>(
       selector: (context, emailStore) => emailStore.onMailView,
       builder: (context, onMailView, child) {
-        var fadeIn = Tween<double>(
-                begin: onMailView ? 0 : 1, end: onMailView ? 0 : -1)
-            .animate(drawerController.drive(CurveTween(curve: standardEasing)));
-
         bottomAppBarController.forward();
 
         return SizeTransition(
@@ -330,15 +330,22 @@ class _AnimatedBottomAppBar extends StatelessWidget {
                             selector: (context, emailStore) =>
                                 emailStore.currentlySelectedInbox,
                             builder: (context, currentlySelectedInbox, child) {
-                              return FadeTransition(
-                                opacity: fadeIn,
-                                child: Text(
-                                  currentlySelectedInbox,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1
-                                      .copyWith(color: ReplyColors.white50),
-                                ),
+                              return _FadeThroughTransitionSwitcher(
+                                fillColor: Colors.transparent,
+                                child: onMailView
+                                    ? SizedBox(height: 0, width: 48)
+                                    : FadeTransition(
+                                        opacity: fadeOut,
+                                        child: Text(
+                                          currentlySelectedInbox,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              .copyWith(
+                                                color: ReplyColors.white50,
+                                              ),
+                                        ),
+                                      ),
                               );
                             },
                           ),
