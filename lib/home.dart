@@ -206,10 +206,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 maintainAnimation: true,
                 maintainState: true,
                 visible: bottomDrawerVisible,
-                child: AnimatedOpacity(
-                  opacity: bottomDrawerVisible ? 1.0 : 0.0,
-                  curve: standardEasing,
-                  duration: _kAnimationDuration,
+                child: FadeTransition(
+                  opacity: _drawerCurve,
                   child: Container(
                     height: double.infinity,
                     width: double.infinity,
@@ -288,6 +286,10 @@ class _AnimatedBottomAppBar extends StatelessWidget {
     return Selector<EmailStore, bool>(
       selector: (context, emailStore) => emailStore.onMailView,
       builder: (context, onMailView, child) {
+        var fadeIn = Tween<double>(
+                begin: onMailView ? 0 : 1, end: onMailView ? 0 : -1)
+            .animate(drawerController.drive(CurveTween(curve: standardEasing)));
+
         bottomAppBarController.forward();
 
         return SizeTransition(
@@ -324,29 +326,18 @@ class _AnimatedBottomAppBar extends StatelessWidget {
                           const SizedBox(width: 8),
                           const _ReplyLogo(),
                           const SizedBox(width: 10),
-                          Selector<EmailStore, bool>(
+                          Selector<EmailStore, String>(
                             selector: (context, emailStore) =>
-                                emailStore.bottomDrawerVisible,
-                            builder: (context, bottomDrawerVisible, child) {
-                              return AnimatedOpacity(
-                                opacity: bottomDrawerVisible || onMailView
-                                    ? 0.0
-                                    : 1.0,
-                                duration: _kAnimationDuration,
-                                curve: standardEasing,
-                                child: Selector<EmailStore, String>(
-                                  selector: (context, emailStore) =>
-                                      emailStore.currentlySelectedInbox,
-                                  builder:
-                                      (context, currentlySelectedInbox, child) {
-                                    return Text(
-                                      currentlySelectedInbox,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1
-                                          .copyWith(color: ReplyColors.white50),
-                                    );
-                                  },
+                                emailStore.currentlySelectedInbox,
+                            builder: (context, currentlySelectedInbox, child) {
+                              return FadeTransition(
+                                opacity: fadeIn,
+                                child: Text(
+                                  currentlySelectedInbox,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      .copyWith(color: ReplyColors.white50),
                                 ),
                               );
                             },
@@ -363,7 +354,6 @@ class _AnimatedBottomAppBar extends StatelessWidget {
                           builder: (context, bottomDrawerVisible, child) {
                             return _BottomAppBarActionItems(
                               drawerController: drawerController,
-                              drawerVisible: bottomDrawerVisible,
                             );
                           },
                         ),
@@ -383,12 +373,9 @@ class _AnimatedBottomAppBar extends StatelessWidget {
 class _BottomAppBarActionItems extends StatelessWidget {
   const _BottomAppBarActionItems({
     @required this.drawerController,
-    @required this.drawerVisible,
-  })  : assert(drawerVisible != null),
-        assert(drawerController != null);
+  }) : assert(drawerController != null);
 
   final AnimationController drawerController;
-  final bool drawerVisible;
 
   @override
   Widget build(BuildContext context) {
@@ -419,7 +406,7 @@ class _BottomAppBarActionItems extends StatelessWidget {
 
         return _FadeThroughTransitionSwitcher(
           fillColor: Colors.transparent,
-          child: drawerVisible
+          child: model.bottomDrawerVisible
               ? Align(
                   key: UniqueKey(),
                   alignment: Alignment.centerRight,
