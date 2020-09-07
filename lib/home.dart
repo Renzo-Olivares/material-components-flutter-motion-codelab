@@ -56,14 +56,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             listen: false,
           ).bottomDrawerVisible = false;
         }
-
-        if (_drawerController.value < 0.01) {
-          setState(() {
-            //Reload state when drawer is at its smallest to toggle visibility
-            //If state is reloaded before this drawer closes abruptly instead
-            //of animating.
-          });
-        }
       });
 
     _dropArrowController = AnimationController(
@@ -104,11 +96,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  bool get _bottomDrawerVisible {
-    final status = _drawerController.status;
-    return status == AnimationStatus.completed ||
-        status == AnimationStatus.forward;
-  }
+  // bool get _bottomDrawerVisible {
+  //   final status = _drawerController.status;
+  //   return status == AnimationStatus.completed ||
+  //       status == AnimationStatus.forward;
+  // }
 
   void _toggleBottomDrawerVisibility() {
     if (_drawerController.value < 0.4) {
@@ -121,9 +113,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       return;
     }
 
+    var bottomDrawerVisible = Provider.of<EmailStore>(
+      context,
+      listen: false,
+    ).bottomDrawerVisible;
+
     _dropArrowController.forward();
     _drawerController.fling(
-      velocity: _bottomDrawerVisible ? -_kFlingVelocity : _kFlingVelocity,
+      velocity: bottomDrawerVisible ? -_kFlingVelocity : _kFlingVelocity,
     );
   }
 
@@ -208,32 +205,43 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             _drawerController.reverse();
             _dropArrowController.reverse();
           },
-          child: Visibility(
-            maintainAnimation: true,
-            maintainState: true,
-            visible: _bottomDrawerVisible,
-            child: AnimatedOpacity(
-              opacity: _bottomDrawerVisible ? 1.0 : 0.0,
-              curve: standardEasing,
-              duration: _kAnimationDuration,
-              child: Container(
-                height: double.infinity,
-                width: double.infinity,
-                color: Theme.of(context).bottomSheetTheme.modalBackgroundColor,
-              ),
-            ),
+          child: Selector<EmailStore, bool>(
+            selector: (context, emailStore) => emailStore.bottomDrawerVisible,
+            builder: (context, bottomDrawerVisible, child) {
+              return Visibility(
+                maintainAnimation: true,
+                maintainState: true,
+                visible: bottomDrawerVisible,
+                child: AnimatedOpacity(
+                  opacity: bottomDrawerVisible ? 1.0 : 0.0,
+                  curve: standardEasing,
+                  duration: _kAnimationDuration,
+                  child: Container(
+                    height: double.infinity,
+                    width: double.infinity,
+                    color:
+                        Theme.of(context).bottomSheetTheme.modalBackgroundColor,
+                  ),
+                ),
+              );
+            },
           ),
         ),
         PositionedTransition(
           rect: drawerAnimation,
-          child: Visibility(
-            visible: _bottomDrawerVisible,
-            child: BottomDrawer(
-              drawerController: _drawerController,
-              dropArrowController: _dropArrowController,
-              onVerticalDragUpdate: _handleDragUpdate,
-              onVerticalDragEnd: _handleDragEnd,
-            ),
+          child: Selector<EmailStore, bool>(
+            selector: (context, emailStore) => emailStore.bottomDrawerVisible,
+            builder: (context, bottomDrawerVisible, child) {
+              return Visibility(
+                visible: bottomDrawerVisible,
+                child: BottomDrawer(
+                  drawerController: _drawerController,
+                  dropArrowController: _dropArrowController,
+                  onVerticalDragUpdate: _handleDragUpdate,
+                  onVerticalDragEnd: _handleDragEnd,
+                ),
+              );
+            },
           ),
         ),
       ],
@@ -250,17 +258,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       bottomNavigationBar: _AnimatedBottomAppBar(
         bottomAppBarController: _bottomAppBarController,
         bottomAppBarCurve: _bottomAppBarCurve,
-        bottomDrawerVisible: _bottomDrawerVisible,
+        // bottomDrawerVisible: _bottomDrawerVisible,
         drawerController: _drawerController,
         dropArrowCurve: _dropArrowCurve,
         toggleBottomDrawerVisibility: _toggleBottomDrawerVisibility,
       ),
-      floatingActionButton: _bottomDrawerVisible
-          ? null
-          : const Padding(
-              padding: EdgeInsetsDirectional.only(bottom: 8),
-              child: _ReplyFab(),
-            ),
+      // floatingActionButton: null,
+      floatingActionButton:
+          Provider.of<EmailStore>(context, listen: true).bottomDrawerVisible
+              ? null
+              : const Padding(
+                  padding: EdgeInsetsDirectional.only(bottom: 8),
+                  child: _ReplyFab(),
+                ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
@@ -270,7 +280,7 @@ class _AnimatedBottomAppBar extends StatelessWidget {
   const _AnimatedBottomAppBar({
     this.bottomAppBarController,
     this.bottomAppBarCurve,
-    this.bottomDrawerVisible,
+    // this.bottomDrawerVisible,
     this.drawerController,
     this.dropArrowCurve,
     this.toggleBottomDrawerVisibility,
@@ -278,7 +288,7 @@ class _AnimatedBottomAppBar extends StatelessWidget {
 
   final AnimationController bottomAppBarController;
   final Animation<double> bottomAppBarCurve;
-  final bool bottomDrawerVisible;
+  // final bool bottomDrawerVisible;
   final AnimationController drawerController;
   final Animation<double> dropArrowCurve;
   final VoidCallback toggleBottomDrawerVisibility;
@@ -294,9 +304,7 @@ class _AnimatedBottomAppBar extends StatelessWidget {
           sizeFactor: bottomAppBarCurve,
           axisAlignment: -1,
           child: Padding(
-            padding: EdgeInsetsDirectional.only(
-              top: bottomDrawerVisible ? 2 : 0,
-            ),
+            padding: const EdgeInsetsDirectional.only(top: 2),
             child: BottomAppBar(
               shape: const WaterfallNotchedRectangle(),
               notchMargin: 6,
@@ -326,25 +334,32 @@ class _AnimatedBottomAppBar extends StatelessWidget {
                           const SizedBox(width: 8),
                           const _ReplyLogo(),
                           const SizedBox(width: 10),
-                          AnimatedOpacity(
-                            opacity:
-                                bottomDrawerVisible || onMailView ? 0.0 : 1.0,
-                            duration: _kAnimationDuration,
-                            curve: standardEasing,
-                            child: Selector<EmailStore, String>(
-                              selector: (context, emailStore) =>
-                                  emailStore.currentlySelectedInbox,
-                              builder:
-                                  (context, currentlySelectedInbox, child) {
-                                return Text(
-                                  currentlySelectedInbox,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1
-                                      .copyWith(color: ReplyColors.white50),
-                                );
-                              },
-                            ),
+                          Selector<EmailStore, bool>(
+                            selector: (context, emailStore) =>
+                                emailStore.bottomDrawerVisible,
+                            builder: (context, bottomDrawerVisible, child) {
+                              return AnimatedOpacity(
+                                opacity: bottomDrawerVisible || onMailView
+                                    ? 0.0
+                                    : 1.0,
+                                duration: _kAnimationDuration,
+                                curve: standardEasing,
+                                child: Selector<EmailStore, String>(
+                                  selector: (context, emailStore) =>
+                                      emailStore.currentlySelectedInbox,
+                                  builder:
+                                      (context, currentlySelectedInbox, child) {
+                                    return Text(
+                                      currentlySelectedInbox,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1
+                                          .copyWith(color: ReplyColors.white50),
+                                    );
+                                  },
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -352,9 +367,15 @@ class _AnimatedBottomAppBar extends StatelessWidget {
                     Expanded(
                       child: Container(
                         color: Colors.transparent,
-                        child: _BottomAppBarActionItems(
-                          drawerController: drawerController,
-                          drawerVisible: bottomDrawerVisible,
+                        child: Selector<EmailStore, bool>(
+                          selector: (context, emailStore) =>
+                              emailStore.bottomDrawerVisible,
+                          builder: (context, bottomDrawerVisible, child) {
+                            return _BottomAppBarActionItems(
+                              drawerController: drawerController,
+                              drawerVisible: bottomDrawerVisible,
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -532,9 +553,7 @@ class _ReplyLogo extends StatelessWidget {
 }
 
 class _ReplyFab extends StatefulWidget {
-  const _ReplyFab({this.extended = false});
-
-  final bool extended;
+  const _ReplyFab();
 
   @override
   _ReplyFabState createState() => _ReplyFabState();
