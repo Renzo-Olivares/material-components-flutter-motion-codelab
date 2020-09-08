@@ -68,6 +68,7 @@ class MailViewRouterDelegate extends RouterDelegate<void>
 
     //Handles the back button when on the ComposePage.
     if (onCompose) {
+      emailStore.onCompose = false;
       return SynchronousFuture<bool>(false);
     }
 
@@ -83,6 +84,7 @@ class MailViewRouterDelegate extends RouterDelegate<void>
     // Handles the back button press when on the MailView. If there is a route
     // to pop then pop it, and reset the currentlySelectedEmailId to -1
     // to notify listeners that we are no longer on the MailView.
+    print('over here');
     if (navigatorKey.currentState.canPop()) {
       navigatorKey.currentState.pop();
       Provider.of<EmailStore>(navigatorKey.currentContext, listen: false)
