@@ -1,4 +1,3 @@
-import 'package:animations/animations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,10 +25,11 @@ class MailViewRouterDelegate extends RouterDelegate<void>
           key: navigatorKey,
           onPopPage: _handlePopPage,
           pages: [
-            FadeThroughTransitionPageWrapper(
-              child: InboxPage(destination: currentlySelectedInbox),
-              transitionKey: ValueKey(currentlySelectedInbox),
-            ),
+            TransitionBuilderPage(
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return InboxPage(destination: currentlySelectedInbox);
+              },
+            )
           ],
         );
       },
@@ -99,23 +99,4 @@ class MailViewRouterDelegate extends RouterDelegate<void>
   }
 }
 
-class FadeThroughTransitionPageWrapper extends TransitionBuilderPage {
-  FadeThroughTransitionPageWrapper(
-      {@required this.child, @required this.transitionKey})
-      : assert(child != null),
-        assert(transitionKey != null),
-        super(
-          key: transitionKey,
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return FadeThroughTransition(
-              fillColor: Theme.of(context).scaffoldBackgroundColor,
-              animation: animation,
-              secondaryAnimation: secondaryAnimation,
-              child: child,
-            );
-          },
-        );
-
-  final Widget child;
-  final ValueKey transitionKey;
-}
+// TODO: Fade through transition between different mailboxes
