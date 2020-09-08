@@ -25,6 +25,7 @@ class MailViewRouterDelegate extends RouterDelegate<void>
           key: navigatorKey,
           onPopPage: _handlePopPage,
           pages: [
+            // TODO: Fade through transition between different mailboxes (Motion)
             TransitionBuilderPage(
               pageBuilder: (context, animation, secondaryAnimation) {
                 return InboxPage(destination: currentlySelectedInbox);
