@@ -38,7 +38,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Animation<double> _drawerCurve;
   Animation<double> _dropArrowCurve;
   Animation<double> _bottomAppBarCurve;
-  int _selectedIndex = 0;
 
   final _bottomDrawerKey = GlobalKey(debugLabel: 'Bottom Drawer');
   final _navigationDestinations = <_Destination>[
@@ -147,7 +146,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  void _onDestinationSelected(int index, String destination) {
+  void _onDestinationSelected(String destination) {
     var emailStore = Provider.of<EmailStore>(
       context,
       listen: false,
@@ -161,9 +160,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       emailStore.currentlySelectedInbox = destination;
     }
 
-    setState(() {
-      _selectedIndex = index;
-    });
+    setState(() {});
   }
 
   bool get _bottomDrawerVisible {
@@ -295,7 +292,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 destinations: _navigationDestinations,
                 drawerController: _drawerController,
                 dropArrowController: _dropArrowController,
-                selectedIndex: _selectedIndex,
                 onItemTapped: _onDestinationSelected,
               ),
               trailing: _BottomDrawerFolderSection(folders: _folders),
@@ -319,8 +315,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         bottomDrawerVisible: _bottomDrawerVisible,
         drawerController: _drawerController,
         dropArrowCurve: _dropArrowCurve,
-        navigationDestinations: _navigationDestinations,
-        selectedIndex: _selectedIndex,
         toggleBottomDrawerVisibility: _toggleBottomDrawerVisibility,
       ),
       floatingActionButton: _bottomDrawerVisible
@@ -341,8 +335,6 @@ class _AnimatedBottomAppBar extends StatelessWidget {
     this.bottomDrawerVisible,
     this.drawerController,
     this.dropArrowCurve,
-    this.navigationDestinations,
-    this.selectedIndex,
     this.toggleBottomDrawerVisibility,
   });
 
@@ -351,8 +343,6 @@ class _AnimatedBottomAppBar extends StatelessWidget {
   final bool bottomDrawerVisible;
   final AnimationController drawerController;
   final Animation<double> dropArrowCurve;
-  final List<_Destination> navigationDestinations;
-  final int selectedIndex;
   final VoidCallback toggleBottomDrawerVisibility;
 
   @override
@@ -406,13 +396,24 @@ class _AnimatedBottomAppBar extends StatelessWidget {
                                 ? const SizedBox(height: 0, width: 48)
                                 : FadeTransition(
                                     opacity: fadeOut,
-                                    child: Text(
-                                      navigationDestinations[selectedIndex]
-                                          .name,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1
-                                          .copyWith(color: ReplyColors.white50),
+                                    child: Selector<EmailStore, String>(
+                                      selector: (context, emailStore) =>
+                                          emailStore.currentlySelectedInbox,
+                                      builder: (
+                                        context,
+                                        currentlySelectedInbox,
+                                        child,
+                                      ) {
+                                        return Text(
+                                          currentlySelectedInbox,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              .copyWith(
+                                                color: ReplyColors.white50,
+                                              ),
+                                        );
+                                      },
                                     ),
                                   ),
                           ),
@@ -481,7 +482,7 @@ class _BottomAppBarActionItems extends StatelessWidget {
           child: drawerVisible
               ? Align(
                   key: UniqueKey(),
-                  alignment: Alignment.centerRight,
+                  alignment: AlignmentDirectional.bottomEnd,
                   child: IconButton(
                     icon: const Icon(Icons.settings),
                     color: ReplyColors.white50,
@@ -548,7 +549,7 @@ class _BottomAppBarActionItems extends StatelessWidget {
                       ],
                     )
                   : Align(
-                      alignment: Alignment.centerRight,
+                      alignment: AlignmentDirectional.bottomEnd,
                       child: IconButton(
                         icon: const Icon(Icons.search),
                         color: ReplyColors.white50,
@@ -571,19 +572,16 @@ class _BottomDrawerDestinations extends StatelessWidget {
     @required this.destinations,
     @required this.drawerController,
     @required this.dropArrowController,
-    @required this.selectedIndex,
     @required this.onItemTapped,
   })  : assert(destinations != null),
         assert(drawerController != null),
         assert(dropArrowController != null),
-        assert(selectedIndex != null),
         assert(onItemTapped != null);
 
   final List<_Destination> destinations;
   final AnimationController drawerController;
   final AnimationController dropArrowController;
-  final int selectedIndex;
-  final void Function(int, String) onItemTapped;
+  final void Function(String) onItemTapped;
 
   @override
   Widget build(BuildContext context) {
@@ -594,28 +592,34 @@ class _BottomDrawerDestinations extends StatelessWidget {
         for (var destination in destinations)
           InkWell(
             onTap: () {
-              onItemTapped(destination.index, destination.name);
+              onItemTapped(destination.name);
               drawerController.reverse();
               dropArrowController.forward();
             },
-            child: ListTile(
-              leading: ImageIcon(
-                AssetImage(
-                  destination.icon,
-                  package: _assetsPackage,
-                ),
-                color: destination.index == selectedIndex
-                    ? theme.colorScheme.secondary
-                    : ReplyColors.white50.withOpacity(0.64),
-              ),
-              title: Text(
-                destination.name,
-                style: theme.textTheme.bodyText2.copyWith(
-                  color: destination.index == selectedIndex
-                      ? theme.colorScheme.secondary
-                      : ReplyColors.white50.withOpacity(0.64),
-                ),
-              ),
+            child: Selector<EmailStore, String>(
+              selector: (context, emailStore) =>
+                  emailStore.currentlySelectedInbox,
+              builder: (context, currentlySelectedInbox, child) {
+                return ListTile(
+                  leading: ImageIcon(
+                    AssetImage(
+                      destination.icon,
+                      package: _assetsPackage,
+                    ),
+                    color: destination.name == currentlySelectedInbox
+                        ? theme.colorScheme.secondary
+                        : ReplyColors.white50.withOpacity(0.64),
+                  ),
+                  title: Text(
+                    destination.name,
+                    style: theme.textTheme.bodyText2.copyWith(
+                      color: destination.name == currentlySelectedInbox
+                          ? theme.colorScheme.secondary
+                          : ReplyColors.white50.withOpacity(0.64),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
       ],
