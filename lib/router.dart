@@ -1,4 +1,3 @@
-import 'package:animations/animations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -48,14 +47,17 @@ class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
             key: navigatorKey,
             onPopPage: _handlePopPage,
             pages: [
-              SharedAxisTransitionPageWrapper(
-                transitionKey: ValueKey('home'),
-                child: const HomePage(),
+              // TODO: Shared z axis transition between Home and Search (Motion)
+              TransitionBuilderPage(
+                pageBuilder: (context, animation, secondaryAnimation) {
+                  return const HomePage();
+                },
               ),
               if (routePath is ReplySearchPath)
-                SharedAxisTransitionPageWrapper(
-                  transitionKey: ValueKey('search'),
-                  child: const SearchPage(),
+                TransitionBuilderPage(
+                  pageBuilder: (context, animation, secondaryAnimation) {
+                    return const SearchPage();
+                  },
                 ),
             ],
           );
@@ -97,27 +99,7 @@ class ReplySearchPath extends ReplyRoutePath {
   const ReplySearchPath();
 }
 
-class SharedAxisTransitionPageWrapper extends TransitionBuilderPage {
-  SharedAxisTransitionPageWrapper(
-      {@required this.child, @required this.transitionKey})
-      : assert(child != null),
-        assert(transitionKey != null),
-        super(
-          key: transitionKey,
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return SharedAxisTransition(
-              fillColor: Theme.of(context).cardColor,
-              animation: animation,
-              secondaryAnimation: secondaryAnimation,
-              transitionType: SharedAxisTransitionType.scaled,
-              child: child,
-            );
-          },
-        );
-
-  final Widget child;
-  final ValueKey transitionKey;
-}
+// TODO: Shared z axis transition between Home and Search (Motion)
 
 class ReplyRouteInformationParser
     extends RouteInformationParser<ReplyRoutePath> {
