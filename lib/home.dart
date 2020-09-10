@@ -750,7 +750,7 @@ class _ReplyFabState extends State<_ReplyFab>
           openBuilder: (context, closedContainer) {
             return const ComposePage();
           },
-          openColor: theme.cardColor,
+          openColor: theme.colorScheme.secondary,
           onClosed: (success) {
             Provider.of<EmailStore>(
               context,
@@ -761,29 +761,125 @@ class _ReplyFabState extends State<_ReplyFab>
           closedColor: theme.colorScheme.secondary,
           closedElevation: 6,
           closedBuilder: (context, openContainer) {
-            return Tooltip(
-              message: tooltip,
-              child: InkWell(
-                customBorder: circleFabBorder,
-                onTap: () {
+            return ClipPath(
+              clipper: ShapeBorderClipper(
+                shape: CircleBorder(),
+                textDirection: Directionality.of(context),
+              ),
+              child: FloatingActionButton(
+                heroTag: 'Bottom App Bar FAB',
+                tooltip: tooltip,
+                child: fabSwitcher,
+                clipBehavior: Clip.hardEdge,
+                // hasMaterialParent: true,
+                onPressed: () {
                   Provider.of<EmailStore>(
                     context,
                     listen: false,
                   ).onCompose = true;
                   openContainer();
                 },
-                child: SizedBox(
-                  height: _mobileFabDimension,
-                  width: _mobileFabDimension,
-                  child: Center(
-                    child: fabSwitcher,
-                  ),
-                ),
               ),
             );
+            // return Tooltip(
+            //   message: tooltip,
+            //   child: InkWell(
+            //     customBorder: circleFabBorder,
+            //     onTap: () {
+            //       Provider.of<EmailStore>(
+            //         context,
+            //         listen: false,
+            //       ).onCompose = true;
+            //       openContainer();
+            //     },
+            //     child: SizedBox(
+            //       height: _mobileFabDimension,
+            //       width: _mobileFabDimension,
+            //       child: Center(
+            //         child: fabSwitcher,
+            //       ),
+            //     ),
+            //   ),
+            // );
+            // return OpenContainerFloatingActionButton(
+            //   onPressed: () {
+            //     Provider.of<EmailStore>(
+            //       context,
+            //       listen: false,
+            //     ).onCompose = true;
+            //     openContainer();
+            //   },
+            //   tooltip: tooltip,
+            //   child: fabSwitcher,
+            // );
+            // return Tooltip(
+            //   message: tooltip,
+            //   child: RawMaterialButton(
+            //     elevation: 6,
+            //     focusElevation: 8,
+            //     clipBehavior: Clip.none,
+            //     autofocus: false,
+            //     onPressed: () {
+            //       Provider.of<EmailStore>(
+            //         context,
+            //         listen: false,
+            //       ).onCompose = true;
+            //       openContainer();
+            //     },
+            //     shape: circleFabBorder,
+            //     child: SizedBox(
+            //       height: _mobileFabDimension,
+            //       width: _mobileFabDimension,
+            //       child: Center(
+            //         child: fabSwitcher,
+            //       ),
+            //     ),
+            //   ),
+            // );
           },
         );
       },
+    );
+  }
+}
+
+class OpenContainerFloatingActionButton extends StatelessWidget {
+  const OpenContainerFloatingActionButton(
+      {this.child, this.onPressed, this.tooltip});
+
+  final Widget child;
+  final VoidCallback onPressed;
+  final String tooltip;
+
+  static const double _defaultElevation = 6;
+  static const double _defaultFocusElevation = 8;
+  static const double _defaultHoverElevation = 10;
+  static const double _defaultHighlightElevation = 12;
+  static const ShapeBorder _defaultShape = CircleBorder();
+
+  static const BoxConstraints _kSizeConstraints = BoxConstraints.tightFor(
+    width: 56.0,
+    height: 56.0,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return MergeSemantics(
+      child: Tooltip(
+        message: tooltip,
+        child: RawMaterialButton(
+          elevation: _defaultElevation,
+          focusElevation: _defaultFocusElevation,
+          highlightElevation: _defaultHighlightElevation,
+          hoverElevation: _defaultHoverElevation,
+          clipBehavior: Clip.none,
+          autofocus: false,
+          onPressed: onPressed,
+          constraints: _kSizeConstraints,
+          shape: _defaultShape,
+          child: child,
+        ),
+      ),
     );
   }
 }
