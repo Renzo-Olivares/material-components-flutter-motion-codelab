@@ -245,11 +245,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Widget _buildStack(BuildContext context, BoxConstraints constraints) {
     final drawerSize = constraints.biggest;
+    final drawerHeaderHeight = 100.0;
     final ValueChanged<String> updateMailbox = _onDestinationSelected;
 
     final drawerAnimation = RelativeRectTween(
       begin: RelativeRect.fromLTRB(0.0, drawerSize.height, 0.0, 0.0),
-      end: const RelativeRect.fromLTRB(0.0, 0.0, 0.0, 0.0),
+      end: RelativeRect.fromLTRB(0.0, -drawerHeaderHeight, 0.0, 0.0),
     ).animate(_drawerCurve);
 
     return Stack(
